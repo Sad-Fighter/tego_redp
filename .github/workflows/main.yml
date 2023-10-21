@@ -26,9 +26,10 @@ jobs:
         run: Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
 
       - name: Set-LocalUser
+-       name: Create New User
         run: |
-          Set-LocalUser -Name "runneradmin" -Password (ConvertTo-SecureString -AsPlainText "P@ssw0rd!" -Force)
-          net user runneradmin /add
+          net user runneradmin "P@ssw0rd!" /add
+
 
       - name: Create Tunnel
         run: .\ngrok\ngrok.exe tcp 3389
