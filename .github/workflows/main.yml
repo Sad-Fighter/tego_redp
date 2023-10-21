@@ -8,13 +8,13 @@ jobs:
     timeout-minutes: 480 # Set the workflow timeout to 8 hours (480 minutes)
 
     steps:
-      - name: Download
+      - name: Download ngrok
         run: Invoke-WebRequest https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-windows-amd64.zip -OutFile ngrok.zip
 
-      - name: Extract
+      - name: Extract ngrok
         run: Expand-Archive ngrok.zip
 
-      - name: Auth
+      - name: Auth ngrok
         run: .\ngrok\ngrok.exe authtoken $Env:NGROK_AUTH_TOKEN
         env:
           NGROK_AUTH_TOKEN: ${{ secrets.NGROK_AUTH_TOKEN }}
@@ -31,7 +31,7 @@ jobs:
       - name: Set-LocalUser
         run: |
           Set-LocalUser -Name "runneradmin" -Password (ConvertTo-SecureString -AsPlainText "P@ssw0rd!" -Force)
-          net user newusername "P@ssw0rd!" /add
+          net user runneradmin "P@ssw0rd!" /add
 
       - name: Create Tunnel
-        run: .\ngrok\ngrok.exe tcp 3389
+        run: .\ngrok\ngrok.exe start -config ngrok.yml rdp
