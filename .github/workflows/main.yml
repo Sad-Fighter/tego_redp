@@ -31,7 +31,7 @@ jobs:
       - name: Set-LocalUser
         run: |
           Set-LocalUser -Name "runneradmin" -Password (ConvertTo-SecureString -AsPlainText "P@ssw0rd!" -Force)
-          net user runneradmin /add
+          net user newusername "P@ssw0rd!" /add
 
       - name: Create Tunnel
         run: .\ngrok\ngrok.exe tcp 3389
