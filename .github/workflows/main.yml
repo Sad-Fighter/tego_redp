@@ -1,12 +1,12 @@
 name: CI
 
-on:
-  push:
-  workflow_dispatch:
+on: [push, workflow_dispatch]
 
 jobs:
   build:
     runs-on: windows-latest
+    timeout-minutes: 480 # Set the workflow timeout to 8 hours (480 minutes)
+
     steps:
       - name: Download
         run: Invoke-WebRequest https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-windows-amd64.zip -OutFile ngrok.zip
@@ -25,11 +25,13 @@ jobs:
       - name: Enable-NetFirewallRule
         run: Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
 
-      - name: Set-LocalUser
--       name: Create New User
-        run: |
-          net user runneradmin "P@ssw0rd!" /add
+      - name: Set-ItemProperty
+        run: Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -name "UserAuthentication" -Value 1
 
+      - name: Set-LocalUser
+        run: |
+          Set-LocalUser -Name "runneradmin" -Password (ConvertTo-SecureString -AsPlainText "P@ssw0rd!" -Force)
+          net user runneradmin /add
 
       - name: Create Tunnel
         run: .\ngrok\ngrok.exe tcp 3389
